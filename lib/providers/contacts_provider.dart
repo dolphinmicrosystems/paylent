@@ -1,8 +1,8 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
+import 'package:paylent/models/user.dart';
 
-final contactsProvider =
-    StateNotifierProvider<ContactsNotifier, List<Contact>>(
+final contactsProvider = StateNotifierProvider<ContactsNotifier, List<Contact>>(
   (final ref) => ContactsNotifier(),
 );
 
@@ -52,6 +52,27 @@ class ContactsNotifier extends StateNotifier<List<Contact>> {
         if (c.id == updated.id) updated else c
     ];
   }
+
+  void ensureCurrentUser(final AppUser user) {
+  final exists = state.any((final c) => c.id == user.id);
+  if (!exists) {
+    state = [
+      Contact(
+        id: user.id, 
+        name: user.name,
+        email: user.email,
+        avatarUrl: user.avatarUrl,
+      ),
+      ...state,
+    ];
+  }
+}
+
+  String displayName({
+    required final Contact contact,
+    required final String currentUserId,
+  }) =>
+      contact.id == currentUserId ? 'You' : contact.name;
 
   void delete(final String id) {
     state = state.where((final c) => c.id != id).toList();

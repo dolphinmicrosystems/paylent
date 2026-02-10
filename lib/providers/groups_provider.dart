@@ -14,14 +14,14 @@ class GroupsNotifier extends StateNotifier<List<Group>> {
       id: 'g1',
       name: 'Roommates',
       category: GroupCategory.family,
-      participantIds: ['1', '2', '3'],
+      participantIds: ['me_001', '1', '2', '3'],
       transactionIds: ['t1', 't2'],
     ),
     const Group(
       id: 'g2',
       name: 'Trip to Goa',
       category: GroupCategory.trip,
-      participantIds: ['1', '3'],
+      participantIds: ['me_001', '1', '3'],
       transactionIds: ['t3', 't4'],
     ),
   ];

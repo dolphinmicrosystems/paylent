@@ -15,10 +15,10 @@ class PaidBySelectionScreen extends ConsumerWidget {
   });
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
+  Widget build(final BuildContext context, final WidgetRef ref) {
     // 1️⃣ Get group
     final group = ref.watch(groupsProvider).firstWhere(
-          (g) => g.id == groupId,
+          (final g) => g.id == groupId,
         );
 
     // 2️⃣ Get contacts
@@ -26,7 +26,7 @@ class PaidBySelectionScreen extends ConsumerWidget {
 
     // 3️⃣ Filter group participants
     final List<Contact> participants = contacts
-        .where((c) => group.participantIds.contains(c.id))
+        .where((final c) => group.participantIds.contains(c.id))
         .toList();
 
     return Scaffold(
@@ -35,7 +35,7 @@ class PaidBySelectionScreen extends ConsumerWidget {
           ? const Center(child: Text('No participants found'))
           : ListView.builder(
               itemCount: participants.length,
-              itemBuilder: (context, index) {
+              itemBuilder: (final context, final index) {
                 final contact = participants[index];
                 final isSelected = contact.id == selectedValue;
 

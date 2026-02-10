@@ -2,6 +2,7 @@ class Contact {
   final String id;
   String name;
   String email;
+  bool isLoggedUser;
   final String avatarUrl;
   final bool isFavorite;
 
@@ -11,6 +12,7 @@ class Contact {
     required this.email,
     required this.avatarUrl,
     this.isFavorite = false,
+    this.isLoggedUser = false,
   });
 
   Contact copy() => Contact(
