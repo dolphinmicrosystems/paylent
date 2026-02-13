@@ -3,9 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/app_nav.dart';
 import 'package:paylent/models/transaction_model.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/transactions_provider.dart';
 import 'package:paylent/screens/groups/tabs/expense/add_expense_screen.dart';
+import 'package:paylent/utils/contact_display.dart';
 
 class ExpensesTab extends ConsumerWidget {
   final List<Transaction> transactions;
@@ -88,7 +89,7 @@ class ExpensesTab extends ConsumerWidget {
 
                   final contact = ref
                       .read(contactsProvider.notifier)
-                      .getById(tx.paidByContactId);
+                      .getByIdSafe(tx.paidByContactId);
 
                   return Column(
                     children: [
@@ -104,7 +105,7 @@ class ExpensesTab extends ConsumerWidget {
                           child: Icon(Icons.receipt, color: Colors.white),
                         ),
                         title: Text(tx.title),
-                        subtitle: Text('Paid by ${contact.name}'),
+                        subtitle: Text('Paid by ${displayName(contact: contact, currentUserId: '')}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.center,

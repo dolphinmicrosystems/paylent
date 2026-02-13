@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/groups_provider.dart';
 
 class PaidBySelectionScreen extends ConsumerWidget {
@@ -22,10 +22,10 @@ class PaidBySelectionScreen extends ConsumerWidget {
         );
 
     // 2️⃣ Get contacts
-    final contacts = ref.watch(contactsProvider);
+    final contactsNotifier = ref.watch(contactsProvider.notifier);
 
     // 3️⃣ Filter group participants
-    final List<Contact> participants = contacts
+    final List<Contact> participants = contactsNotifier.contacts
         .where((final c) => group.participantIds.contains(c.id))
         .toList();
 

@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
 import 'package:paylent/screens/contacts/widgets/alphabet_section.dart';
@@ -20,7 +20,8 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   String _searchQuery = '';
 
   List<Contact> get filteredContacts {
-    final allContacts = ref.watch(contactsProvider);
+    final contactsAsync = ref.watch(contactsProvider);
+    final allContacts = contactsAsync.value ?? const <Contact>[];
     return Contact.filter(
       allContacts: allContacts,
       searchQuery: _searchQuery,

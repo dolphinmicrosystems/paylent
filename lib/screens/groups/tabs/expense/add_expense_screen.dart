@@ -7,7 +7,7 @@ import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/models/currency_model.dart';
 import 'package:paylent/models/transaction_category.dart';
 import 'package:paylent/models/transaction_model.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/current_user_provider.dart';
 import 'package:paylent/providers/transactions_provider.dart';
 import 'package:paylent/screens/groups/tabs/expense/category_selection_screen.dart';
@@ -148,7 +148,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
             child: const Text(
               'Delete',
               style: TextStyle(color: Colors.red),
-            ),
+             ),
           ),
         ],
       ),
@@ -157,10 +157,10 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
 
   @override
   Widget build(final BuildContext context) {
-    final currentUserId = ref.watch(currentUserProvider).id;
-    final contacts = ref.watch(contactsProvider);
+   final currentUserId = ref.watch(currentUserProvider).id;
+    final contactNotifier = ref.watch(contactsProvider.notifier);
 
-    final paidByContact = contacts.firstWhere((c) => c.id == _paidById);
+    final paidByContact = contactNotifier.getByIdSafe(_paidById) ;
 
     final paidByName = displayName(
       contact: paidByContact,

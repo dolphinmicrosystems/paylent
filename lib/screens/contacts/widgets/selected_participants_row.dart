@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/models/contact_info.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/selected_participants_provider.dart';
 
 class SelectedParticipantsRow extends ConsumerWidget {
@@ -10,10 +11,15 @@ class SelectedParticipantsRow extends ConsumerWidget {
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
     final selectedIds = ref.watch(selectedParticipantsProvider(groupId));
-    final allContacts = ref.watch(contactsProvider);
+    final contactsAsync = ref.watch(contactsProvider);
 
-    final selectedContacts =
-        allContacts.where((final c) => selectedIds.contains(c.id)).toList();
+    final selectedContacts = contactsAsync.maybeWhen(
+    data: (final allContacts) => allContacts
+        .where((final c) => selectedIds.contains(c.id))
+        .toList(),
+    orElse: () => <Contact>[],
+  );
+
 
     if (selectedContacts.isEmpty) return const SizedBox.shrink();
 

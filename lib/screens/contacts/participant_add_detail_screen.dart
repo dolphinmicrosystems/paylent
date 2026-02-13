@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 
 class ParticipantDetailScreen extends ConsumerStatefulWidget {
   final String contactId;
@@ -14,21 +14,32 @@ class ParticipantDetailScreen extends ConsumerStatefulWidget {
 }
 
 class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
-  late Contact _edited;
+  Contact? _edited;
   bool _isEditing = false;
+  TextEditingController? _nameController;
+  TextEditingController? _emailController;
 
   @override
   void initState() {
     super.initState();
-    final contact =
-        ref.read(contactsProvider.notifier).getById(widget.contactId);
+  }
 
-    _edited = contact.copy();
+  @override
+  void dispose() {
+    _nameController?.dispose();
+    _emailController?.dispose();
+    super.dispose();
   }
 
   bool get _hasChanges {
-    final byId = ref.read(contactsProvider.notifier).getById(widget.contactId);
-    return _edited.name != byId.name || _edited.email != byId.email;
+    final byId =
+        ref.read(contactsProvider.notifier).getByIdSafe(widget.contactId);
+        
+    final edited = _edited;
+
+    if (byId == null || edited == null) return false;
+
+    return edited.name != byId.name || edited.email != byId.email;
   }
 
   Future<bool> _showConfirmDialog() async {
@@ -57,13 +68,14 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
   }
 
   Future<void> _handleSave() async {
+    if (_edited == null) return;
+
     final confirmed = await _showConfirmDialog();
     if (!confirmed) return;
 
-    ref.read(contactsProvider.notifier).update(_edited);
+    ref.read(contactsProvider.notifier).update(_edited!);
     Navigator.pop(context, _edited);
   }
-
 
   Future<void> _delete() async {
     ref.read(contactsProvider.notifier).delete(widget.contactId);
@@ -94,8 +106,7 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
     return result ?? false;
   }
 
-  @override
-  Widget build(final BuildContext context) => PopScope(
+  Widget _buildScaffold(final BuildContext context) => PopScope(
         canPop: false,
         onPopInvokedWithResult: (final didPop, final _) async {
           if (didPop) return;
@@ -114,7 +125,7 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
             actions: [
               Icon(
                 Icons.star,
-                color: _edited.isFavorite ? Colors.amber : Colors.grey,
+                color: _edited!.isFavorite ? Colors.amber : Colors.grey,
               ),
               const SizedBox(width: 16),
             ],
@@ -122,63 +133,53 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
           body: Column(
             children: [
               const SizedBox(height: 40),
-
-              /// DOUBLE TAP IMAGE
               GestureDetector(
                 onDoubleTap: () => setState(() => _isEditing = true),
                 child: CircleAvatar(
                   radius: 48,
-                  backgroundImage: NetworkImage(_edited.avatarUrl),
+                  backgroundImage: NetworkImage(_edited!.avatarUrl),
                 ),
               ),
-
               const SizedBox(height: 16),
-
-              /// NAME
               GestureDetector(
                 onDoubleTap: () => setState(() => _isEditing = true),
                 child: _isEditing
                     ? TextField(
-                        controller: TextEditingController(text: _edited.name),
-                        onChanged: (final v) => _edited.name = v,
+                        controller: _nameController!,
+                        onChanged: (final v) => setState(() {
+                          _edited = _edited!.copyWith(name: v);
+                        }),
                       )
                     : Text(
-                        _edited.name,
+                        _edited!.name,
                         style: const TextStyle(
                             fontSize: 20, fontWeight: FontWeight.bold),
                       ),
               ),
-
               const SizedBox(height: 8),
-
-              /// EMAIL
               GestureDetector(
                 onDoubleTap: () => setState(() => _isEditing = true),
                 child: _isEditing
                     ? TextField(
-                        controller: TextEditingController(text: _edited.email),
-                        onChanged: (final v) => _edited.email = v,
+                        controller: _emailController!,
+                        onChanged: (final v) => setState(() {
+                          _edited = _edited!.copyWith(email: v);
+                        }),
                       )
                     : Text(
-                        _edited.email,
+                        _edited!.email,
                         style: const TextStyle(color: Colors.grey),
                       ),
               ),
-
               const SizedBox(height: 32),
               const Divider(),
               const SizedBox(height: 32),
-
-              /// SAVE BUTTON
               if (_isEditing)
                 ElevatedButton(
                   onPressed: _handleSave,
                   child: const Text('Save Changes'),
                 ),
-
               const SizedBox(height: 12),
-
-              /// DELETE BUTTON
               OutlinedButton(
                 style: OutlinedButton.styleFrom(
                   foregroundColor: Colors.red,
@@ -191,4 +192,42 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
           ),
         ),
       );
+
+  @override
+  Widget build(final BuildContext context) {
+    final contactsAsync = ref.watch(contactsProvider);
+
+    return contactsAsync.when(
+      loading: () => const Scaffold(
+        body: Center(child: CircularProgressIndicator()),
+      ),
+      error: (final _, final __) => const Scaffold(
+        body: Center(child: Text('Error loading contact')),
+      ),
+      data: (final contacts) {
+        Contact? contact;
+
+        for (final c in contacts) {
+          if (c.id == widget.contactId) {
+            contact = c;
+            break;
+          }
+        }
+
+        if (contact == null) {
+          return const Scaffold(
+            body: Center(child: Text('Contact not found')),
+          );
+        }
+
+        if (_edited == null) {
+          _edited = contact.copy();
+          _nameController = TextEditingController(text: _edited!.name);
+          _emailController = TextEditingController(text: _edited!.email);
+        }
+
+        return _buildScaffold(context);
+      },
+    );
+  }
 }

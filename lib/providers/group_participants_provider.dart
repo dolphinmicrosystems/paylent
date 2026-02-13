@@ -1,6 +1,6 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/groups_provider.dart';
 
 final groupParticipantsProvider =
@@ -8,9 +8,9 @@ final groupParticipantsProvider =
   final group =
       ref.watch(groupsProvider).firstWhere((final g) => g.id == groupId);
 
-  final contacts = ref.watch(contactsProvider);
+  final contactsNotifier = ref.watch(contactsProvider.notifier);
 
-  return contacts
+  return contactsNotifier.contacts
       .where((final c) => group.participantIds.contains(c.id))
       .toList();
 });

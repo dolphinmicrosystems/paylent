@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/models/group_draft_provider.dart';
 import 'package:paylent/models/participants_screen_mode.dart';
-import 'package:paylent/providers/contacts_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/groups_provider.dart';
 import 'package:paylent/providers/selected_participants_provider.dart';
 import 'package:paylent/screens/contacts/contact_search_bar.dart';
@@ -37,6 +37,9 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
   void initState() {
     super.initState();
     _listController = ScrollController();
+     Future.microtask(() {
+    ref.read(contactsProvider.notifier).loadFromDevice();
+  });
   }
 
   @override
@@ -46,7 +49,9 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
   }
 
   List<Contact> get filteredContacts {
-    final allContacts = ref.watch(contactsProvider);
+    final contactsAsync = ref.watch(contactsProvider);
+    final allContacts = contactsAsync.value ?? const <Contact>[];
+
     return Contact.filter(
       allContacts: allContacts,
       searchQuery: _searchQuery,
@@ -109,7 +114,8 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                       children: AlphabetSection.fromContacts(
                           contacts: filteredContacts,
                           itemBuilder: (final contact) =>
-                              ParticipantContactTile(contact: contact, groupId: widget.groupId!)),
+                              ParticipantContactTile(
+                                  contact: contact, groupId: widget.groupId!)),
                     ),
             ),
           ],
