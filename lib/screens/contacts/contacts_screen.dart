@@ -20,7 +20,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
   String _searchQuery = '';
 
   List<Contact> get filteredContacts {
-    final contactsAsync = ref.watch(contactsProvider);
+    final contactsAsync = ref.watch(notifierProvider);
     final allContacts = contactsAsync.value ?? const <Contact>[];
     return Contact.filter(
       allContacts: allContacts,

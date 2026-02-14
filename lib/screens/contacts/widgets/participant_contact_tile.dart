@@ -3,12 +3,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/selected_participants_provider.dart';
 import 'package:paylent/screens/contacts/contact_detail_screen.dart';
+import 'package:paylent/screens/contacts/widgets/contact_avatar.dart';
 
 class ParticipantContactTile extends ConsumerWidget {
   final Contact contact;
   final String groupId;
 
-  const ParticipantContactTile({required this.contact, required this.groupId, super.key});
+  const ParticipantContactTile(
+      {required this.contact, required this.groupId, super.key});
 
   @override
   Widget build(final BuildContext context, final WidgetRef ref) {
@@ -17,7 +19,9 @@ class ParticipantContactTile extends ConsumerWidget {
 
     return InkWell(
       onTap: () {
-        ref.read(selectedParticipantsProvider(groupId).notifier).toggle(contact.id);
+        ref
+            .read(selectedParticipantsProvider(groupId).notifier)
+            .toggle(contact.id);
       },
       onDoubleTap: () async {
         await Navigator.push<String>(
@@ -28,9 +32,7 @@ class ParticipantContactTile extends ConsumerWidget {
         );
       },
       child: ListTile(
-        leading: CircleAvatar(
-          backgroundImage: NetworkImage(contact.avatarUrl),
-        ),
+        leading: ContactAvatar(contact: contact),
         title: Text(contact.name),
         subtitle: Text(contact.email),
         trailing: SizedBox(
@@ -58,3 +60,4 @@ class ParticipantContactTile extends ConsumerWidget {
     );
   }
 }
+

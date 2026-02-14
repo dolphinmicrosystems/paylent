@@ -38,7 +38,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
     super.initState();
     _listController = ScrollController();
      Future.microtask(() {
-    ref.read(contactsProvider.notifier).loadFromDevice();
+    ref.read(notifierProvider.notifier).loadFromDevice();
   });
   }
 
@@ -49,7 +49,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
   }
 
   List<Contact> get filteredContacts {
-    final contactsAsync = ref.watch(contactsProvider);
+    final contactsAsync = ref.watch(notifierProvider);
     final allContacts = contactsAsync.value ?? const <Contact>[];
 
     return Contact.filter(

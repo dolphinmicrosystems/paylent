@@ -1,4 +1,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android" package="com.payee.paylent">
+ <uses-permission android:name="android.permission.READ_CONTACTS"/>
+
     <application
         android:label="paylent"
         android:icon="@mipmap/ic_launcher">

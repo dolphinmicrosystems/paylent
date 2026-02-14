@@ -60,7 +60,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
     _isEdit = widget.isEdit;
     // 2. Schedule the provider update (Safe from "modify during build" error)
     Future.microtask(() {
-      ref.read(contactsProvider.notifier).ensureCurrentUser(
+      ref.read(notifierProvider.notifier).ensureCurrentUser(
             currentUser,
           );
     });
@@ -158,7 +158,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
   @override
   Widget build(final BuildContext context) {
    final currentUserId = ref.watch(currentUserProvider).id;
-    final contactNotifier = ref.watch(contactsProvider.notifier);
+    final contactNotifier = ref.watch(notifierProvider.notifier);
 
     final paidByContact = contactNotifier.getByIdSafe(_paidById) ;
 

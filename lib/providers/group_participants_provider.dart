@@ -8,7 +8,7 @@ final groupParticipantsProvider =
   final group =
       ref.watch(groupsProvider).firstWhere((final g) => g.id == groupId);
 
-  final contactsNotifier = ref.watch(contactsProvider.notifier);
+  final contactsNotifier = ref.watch(notifierProvider.notifier);
 
   return contactsNotifier.contacts
       .where((final c) => group.participantIds.contains(c.id))

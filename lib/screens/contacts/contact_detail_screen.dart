@@ -27,7 +27,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen> {
   }
 
   bool get _hasChanges {
-    final notifier = ref.read(contactsProvider.notifier);
+    final notifier = ref.read(notifierProvider.notifier);
     final original = notifier.getByIdSafe(widget.contactId);
     final edited = _edited;
 
@@ -69,12 +69,12 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen> {
     if (!mounted) return;
     if (!confirmed) return;
 
-    ref.read(contactsProvider.notifier).update(edited);
+    ref.read(notifierProvider.notifier).update(edited);
     Navigator.pop(context, edited);
   }
 
   Future<void> _delete() async {
-    ref.read(contactsProvider.notifier).delete(widget.contactId);
+    ref.read(notifierProvider.notifier).delete(widget.contactId);
     Navigator.pop(context, widget.contactId);
   }
 
@@ -194,7 +194,7 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen> {
 
   @override
   Widget build(final BuildContext context) {
-    final contactsAsync = ref.watch(contactsProvider);
+    final contactsAsync = ref.watch(notifierProvider);
 
     return contactsAsync.when(
       loading: () => const Scaffold(

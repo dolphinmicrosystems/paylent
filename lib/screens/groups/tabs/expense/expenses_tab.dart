@@ -88,7 +88,7 @@ class ExpensesTab extends ConsumerWidget {
                   final isFirstInGroup = i > 0 && flatList[i - 1] is String;
 
                   final contact = ref
-                      .read(contactsProvider.notifier)
+                      .read(notifierProvider.notifier)
                       .getByIdSafe(tx.paidByContactId);
 
                   return Column(

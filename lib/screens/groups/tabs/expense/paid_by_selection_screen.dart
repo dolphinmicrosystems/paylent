@@ -22,7 +22,7 @@ class PaidBySelectionScreen extends ConsumerWidget {
         );
 
     // 2️⃣ Get contacts
-    final contactsNotifier = ref.watch(contactsProvider.notifier);
+    final contactsNotifier = ref.watch(notifierProvider.notifier);
 
     // 3️⃣ Filter group participants
     final List<Contact> participants = contactsNotifier.contacts

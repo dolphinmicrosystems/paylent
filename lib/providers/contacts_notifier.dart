@@ -7,7 +7,7 @@ import 'package:paylent/models/user.dart';
 import 'package:paylent/services/device_contacts_service.dart';
 import 'package:paylent/utils/phone_normalizer.dart';
 
-final contactsProvider =
+final notifierProvider =
     StateNotifierProvider<ContactsNotifier, AsyncValue<List<Contact>>>(
   (final ref) => ContactsNotifier(),
 );

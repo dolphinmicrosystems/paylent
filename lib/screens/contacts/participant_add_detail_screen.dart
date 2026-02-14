@@ -33,8 +33,8 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
 
   bool get _hasChanges {
     final byId =
-        ref.read(contactsProvider.notifier).getByIdSafe(widget.contactId);
-        
+        ref.read(notifierProvider.notifier).getByIdSafe(widget.contactId);
+
     final edited = _edited;
 
     if (byId == null || edited == null) return false;
@@ -73,12 +73,12 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
     final confirmed = await _showConfirmDialog();
     if (!confirmed) return;
 
-    ref.read(contactsProvider.notifier).update(_edited!);
+    ref.read(notifierProvider.notifier).update(_edited!);
     Navigator.pop(context, _edited);
   }
 
   Future<void> _delete() async {
-    ref.read(contactsProvider.notifier).delete(widget.contactId);
+    ref.read(notifierProvider.notifier).delete(widget.contactId);
     Navigator.pop(context, widget.contactId);
   }
 
@@ -195,7 +195,7 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
 
   @override
   Widget build(final BuildContext context) {
-    final contactsAsync = ref.watch(contactsProvider);
+    final contactsAsync = ref.watch(notifierProvider);
 
     return contactsAsync.when(
       loading: () => const Scaffold(
