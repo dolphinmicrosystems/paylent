@@ -71,8 +71,7 @@ class _ContactDetailScreenState extends ConsumerState<ParticipantDetailScreen> {
     if (_edited == null) return;
 
     final confirmed = await _showConfirmDialog();
-    if (!confirmed) return;
-
+    if (!confirmed || !mounted) return;
     ref.read(notifierProvider.notifier).update(_edited!);
     Navigator.pop(context, _edited);
   }

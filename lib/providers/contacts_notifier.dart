@@ -1,10 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_contacts/contact.dart' as flutter_contacts;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
-import 'package:paylent/models/registered_user.dart';
 import 'package:paylent/models/user.dart';
 import 'package:paylent/services/device_contacts_service.dart';
+import 'package:paylent/services/user_lookup_service.dart';
 import 'package:paylent/utils/phone_normalizer.dart';
 
 final notifierProvider =
@@ -12,9 +11,10 @@ final notifierProvider =
   (final ref) => ContactsNotifier(),
 );
 
+
 class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
   ContactsNotifier() : super(const AsyncValue.loading()) {
-    state = AsyncValue.data(_initialContacts);
+    //state = AsyncValue.data(_initialContacts);
   }
 
   static final _initialContacts = [
@@ -89,22 +89,56 @@ class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
     state = const AsyncValue.loading();
 
     try {
+      // 1️⃣ Fetch raw device contacts
       final rawContacts = await fetchDeviceContacts();
 
-      final mapped = rawContacts.where((c) => c.phones.isNotEmpty).map((c) {
+      // 2️⃣ Map device contacts → app Contact model
+      final deviceContacts =
+          rawContacts.where((final c) => c.phones.isNotEmpty).map((final c) {
         final phone = normalizePhone(c.phones.first.number);
 
         return Contact(
-          id: 'phone_$phone',
+          id: 'phone_$phone', // temporary id
           name: c.displayName,
           email: '',
           avatarUrl: '',
           phoneNumber: phone,
-          isRegistered: false,
         );
       }).toList();
 
-      state = AsyncValue.data(mapped);
+      if (deviceContacts.isEmpty) {
+        state = const AsyncValue.data([]);
+        return;
+      }
+
+      // 3️⃣ Lookup registered users
+      final registeredUsers = await lookupRegisteredUsers(
+        deviceContacts.map((final c) => c.phoneNumber!).toList(),
+      );
+
+      // 4️⃣ Convert registered users to Map for O(1) lookup
+      final registeredMap = {
+        for (final user in registeredUsers) user.phoneNumber: user,
+      };
+
+      // 5️⃣ Merge device contacts with registered users
+      final mergedContacts = deviceContacts.map((final contact) {
+        final match = registeredMap[contact.phoneNumber];
+
+        if (match != null) {
+          return contact.copyWith(
+            id: match.userId, // replace temp id
+            name: match.name, // optional: use backend name
+            avatarUrl: match.avatarUrl ?? '',
+            isRegistered: true,
+          );
+        }
+
+        return contact;
+      }).toList();
+
+      // 6️⃣ Update state
+      state = AsyncValue.data(mergedContacts);
     } on Exception catch (e, st) {
       state = AsyncValue.error(e, st);
     }
@@ -135,40 +169,5 @@ class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
 
   void delete(final String id) {
     state = AsyncValue.data(contacts.where((final c) => c.id != id).toList());
-  }
-
-  final contactsProvider =
-      StateNotifierProvider<ContactsNotifier, AsyncValue<List<Contact>>>(
-    (final ref) => ContactsNotifier(),
-  );
-
-  void loadFromPhoneContacts(
-      final List<flutter_contacts.Contact> phoneContacts) {
-    state = AsyncValue.data([
-      for (final p in phoneContacts)
-        if (p.phones.isNotEmpty)
-          Contact(
-            id: 'phone_${normalizePhone(p.phones.first.number)}',
-            name: p.displayName,
-            phoneNumber: normalizePhone(p.phones.first.number),
-            email: '',
-            avatarUrl: '',
-            isRegistered: false,
-          ),
-    ]);
-  }
-
-  void markRegisteredUsers(final List<RegisteredUser> users) {
-    state = AsyncValue.data([
-      for (final c in contacts)
-        users.any((final u) => u.phoneNumber == c.phoneNumber)
-            ? c.copyWith(
-                id: users
-                    .firstWhere((final u) => u.phoneNumber == c.phoneNumber)
-                    .userId,
-                isRegistered: true,
-              )
-            : c,
-    ]);
   }
 }

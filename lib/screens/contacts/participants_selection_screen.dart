@@ -30,46 +30,20 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
   int _selectedTab = 0;
   String _searchQuery = '';
   late final ScrollController _listController;
-  List<String> get indexLetters => buildIndexLetters(filteredContacts);
-  Map<String, int> get indexMap => buildLetterIndexMap(filteredContacts);
 
   @override
   void initState() {
     super.initState();
     _listController = ScrollController();
-     Future.microtask(() {
-    ref.read(notifierProvider.notifier).loadFromDevice();
-  });
+    Future.microtask(() {
+      ref.read(notifierProvider.notifier).loadFromDevice();
+    });
   }
 
   @override
   void dispose() {
     _listController.dispose();
     super.dispose();
-  }
-
-  List<Contact> get filteredContacts {
-    final contactsAsync = ref.watch(notifierProvider);
-    final allContacts = contactsAsync.value ?? const <Contact>[];
-
-    return Contact.filter(
-      allContacts: allContacts,
-      searchQuery: _searchQuery,
-      selectedTab: _selectedTab,
-    );
-  }
-
-  List<String> buildIndexLetters(final List<Contact> contacts) {
-    final letters = <String>{};
-
-    for (final c in contacts) {
-      if (c.name.isNotEmpty) {
-        letters.add(c.name[0].toUpperCase());
-      }
-    }
-
-    final sorted = letters.toList()..sort();
-    return sorted;
   }
 
   Map<String, int> buildLetterIndexMap(final List<Contact> contacts) {
@@ -108,15 +82,35 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
             ),
             const SizedBox(height: 8),
             Expanded(
-              child: filteredContacts.isEmpty
-                  ? const Center(child: Text('No contacts found'))
-                  : ListView(
-                      children: AlphabetSection.fromContacts(
-                          contacts: filteredContacts,
-                          itemBuilder: (final contact) =>
-                              ParticipantContactTile(
-                                  contact: contact, groupId: widget.groupId!)),
+              child: ref.watch(notifierProvider).when(
+                    loading: () => const Center(
+                      child: CircularProgressIndicator(),
                     ),
+                    error: (final err, final _) => const Center(
+                      child: Text('Error loading contacts'),
+                    ),
+                    data: (final allContacts) {
+                      final filtered = Contact.filter(
+                        allContacts: allContacts,
+                        searchQuery: _searchQuery,
+                        selectedTab: _selectedTab,
+                      );
+
+                      if (filtered.isEmpty) {
+                        return const Center(child: Text('No contacts found'));
+                      }
+
+                      return ListView(
+                        children: AlphabetSection.fromContacts(
+                          contacts: filtered,
+                          itemBuilder: (final contact) => ParticipantContactTile(
+                            contact: contact,
+                            groupId: widget.groupId!,
+                          ),
+                        ),
+                      );
+                    },
+                  ),
             ),
           ],
         ),
