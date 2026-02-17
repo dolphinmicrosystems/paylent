@@ -17,42 +17,6 @@ class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
     //state = AsyncValue.data(_initialContacts);
   }
 
-  static final _initialContacts = [
-    Contact(
-      id: '1',
-      name: 'Alexia Hershey',
-      email: 'alexia.hershey@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=1',
-      isFavorite: true,
-    ),
-    Contact(
-      id: '2',
-      name: 'Alfonzo Schuessler',
-      email: 'alfonzo.schuessler@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=2',
-    ),
-    Contact(
-      id: '3',
-      name: 'Augustina Midgett',
-      email: 'augustina.midgett@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=3',
-    ),
-    Contact(
-      id: '4',
-      name: 'Charlotte Hanlin',
-      email: 'charlotte.hanlin@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=4',
-      isFavorite: true,
-    ),
-    Contact(
-      id: '5',
-      name: 'Florencio Dorrance',
-      email: 'florencio.dorrance@gmail.com',
-      avatarUrl: 'https://i.pravatar.cc/150?img=5',
-      isFavorite: true,
-    ),
-  ];
-
   List<Contact> get contacts => state.value ?? [];
 
   Contact? getByIdSafe(final String id) {
@@ -93,19 +57,21 @@ class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
       final rawContacts = await fetchDeviceContacts();
 
       // 2️⃣ Map device contacts → app Contact model
-      final deviceContacts =
-          rawContacts.where((final c) => c.phones.isNotEmpty).map((final c) {
+      final futures =
+          rawContacts.where((final c) => c.phones.isNotEmpty).map((final c) async{
         final phone = normalizePhone(c.phones.first.number);
-
+        final formatted = await formatPhoneForDisplay(phone);
         return Contact(
           id: 'phone_$phone', // temporary id
           name: c.displayName,
           email: '',
           avatarUrl: '',
-          phoneNumber: phone,
+          phoneNumber: formatted,
         );
       }).toList();
 
+      final deviceContacts = await Future.wait(futures);
+      
       if (deviceContacts.isEmpty) {
         state = const AsyncValue.data([]);
         return;

@@ -41,6 +41,7 @@ dependencies:
   provider: ^6.1.2
   flutter_contacts: ^1.1.7
   permission_handler: ^11.0.0
+  phone_number: ^2.0.1
 
 dev_dependencies:
   flutter_test:

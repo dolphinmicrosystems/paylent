@@ -68,7 +68,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
     final double t = (_scrollOffset / maxExtent).clamp(0.0, 1.0);
 
     final double titleOpacity = t;
-    final double expandedTitleOpacity = 1 - t;
+    //final double expandedTitleOpacity = 1 - t;
     final double blurSigma = 12 * t;
     final double tabOpacity = 1 - (t * 1.9).clamp(0.0, 1.0);
 
