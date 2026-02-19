@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/app_nav.dart';
+import 'package:paylent/models/category_item.dart';
 import 'package:paylent/models/transaction_model.dart';
 import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/transactions_provider.dart';
@@ -86,6 +87,7 @@ class ExpensesTab extends ConsumerWidget {
                   /// Transaction row
                   final tx = item as Transaction;
                   final isFirstInGroup = i > 0 && flatList[i - 1] is String;
+                  final categoryItem = getCategoryItem(tx.category);
 
                   final contact = ref
                       .read(notifierProvider.notifier)
@@ -100,9 +102,9 @@ class ExpensesTab extends ConsumerWidget {
                           color: Color.fromARGB(59, 46, 46, 46),
                         ),
                       ListTile(
-                        leading: const CircleAvatar(
-                          backgroundColor: Colors.orange,
-                          child: Icon(Icons.receipt, color: Colors.white),
+                        leading:  CircleAvatar(
+                          backgroundColor: categoryItem.backgroundColor,
+                          child: Icon(categoryItem.icon, color: categoryItem.iconColor),
                         ),
                         title: Text(tx.title),
                         subtitle: Text('Paid by ${displayName(contact: contact, currentUserId: '')}'),

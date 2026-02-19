@@ -28,9 +28,7 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
   @override
   Widget build(final BuildContext context) {
     // Filter by search
-    final filteredItems = allCategoryItems.where((final item) => item.title
-          .toLowerCase()
-          .contains(_searchQuery.toLowerCase())).toList();
+    final filteredItems = getCategoryItemByTitle(_searchQuery);
 
     // Group by section
     final Map<String, List<CategoryItem>> grouped = {};
@@ -91,10 +89,10 @@ class _CategorySelectionScreenState extends State<CategorySelectionScreen> {
 
                       return ListTile(
                         leading: CircleAvatar(
-                          backgroundColor: Colors.blueGrey.shade100,
+                          backgroundColor: item.backgroundColor,
                           child: Icon(
                             item.icon,
-                            color: Colors.blueGrey.shade800,
+                            color: item.iconColor,
                           ),
                         ),
                         title: Text(item.title),

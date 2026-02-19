@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/app_nav.dart';
+import 'package:paylent/models/category_item.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/models/currency_model.dart';
 import 'package:paylent/models/transaction_category.dart';
@@ -166,6 +167,9 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
       contact: paidByContact,
       currentUserId: currentUserId,
     );
+
+    final selectedCategoryItem = getCategoryItem(_selectedCategory);
+
     return Scaffold(
       appBar: AppBar(
         title: Text(_isEdit ? 'Edit Expense' : 'Add Expense'),
@@ -298,10 +302,10 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
                   }
                 },
                 child: InputDecorator(
-                  decoration: const InputDecoration(
+                  decoration: InputDecoration(
                     labelText: 'Category',
-                    prefixIcon: Icon(Icons.category_outlined),
-                    suffixIcon: Icon(Icons.chevron_right),
+                    prefixIcon: Icon(selectedCategoryItem.icon),
+                    suffixIcon: const Icon(Icons.chevron_right),
                   ),
                   child: Text(
                     _selectedCategory.name,
