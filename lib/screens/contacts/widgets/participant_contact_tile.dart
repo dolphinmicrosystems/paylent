@@ -5,7 +5,7 @@ import 'package:paylent/providers/selected_participants_provider.dart';
 import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 import 'package:paylent/screens/contacts/widgets/contact_avatar.dart';
 
-class ParticipantContactTile extends ConsumerWidget {
+class  ParticipantContactTile extends ConsumerWidget {
   final Contact contact;
   final String groupId;
 

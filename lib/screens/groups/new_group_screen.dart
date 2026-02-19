@@ -190,8 +190,6 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
       );
 
   Widget _buildIcon(final dynamic iconData) {
-    //final Color iconColor = selected ? Colors.white : Colors.black87;
-
     if (iconData is String) {
       // Emoji
       return Text(

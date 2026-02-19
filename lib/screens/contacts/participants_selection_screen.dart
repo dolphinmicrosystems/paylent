@@ -30,11 +30,16 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
   int _selectedTab = 0;
   String _searchQuery = '';
   late final ScrollController _listController;
+  late final String _selectionKey;
 
   @override
   void initState() {
     super.initState();
     _listController = ScrollController();
+    _selectionKey = widget.mode == ParticipantsScreenMode.createGroup
+      ? 'draft_${DateTime.now().millisecondsSinceEpoch}'
+      : widget.groupId!;
+
     Future.microtask(() {
       ref.read(notifierProvider.notifier).loadFromDevice();
     });
@@ -71,7 +76,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
               },
             ),
             SelectedParticipantsRow(
-              groupId: widget.groupId!,
+              groupId: _selectionKey,
             ),
             const SizedBox(height: 8),
             ContactsTabs(
@@ -105,7 +110,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                           contacts: filtered,
                           itemBuilder: (final contact) => ParticipantContactTile(
                             contact: contact,
-                            groupId: widget.groupId!,
+                            groupId: _selectionKey,
                           ),
                         ),
                       );
@@ -123,7 +128,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                   child: OutlinedButton(
                     onPressed: () {
                       ref
-                          .read(selectedParticipantsProvider(widget.groupId!)
+                          .read(selectedParticipantsProvider(_selectionKey)
                               .notifier)
                           .clear();
                       Navigator.pop(context);
@@ -136,7 +141,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                   child: ElevatedButton(
                     onPressed: () {
                       final selectedIds = ref
-                          .read(selectedParticipantsProvider(widget.groupId!))
+                          .read(selectedParticipantsProvider(_selectionKey))
                           .toList();
 
                       if (widget.mode == ParticipantsScreenMode.createGroup) {
@@ -154,7 +159,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
 
                         ref.read(groupDraftProvider.notifier).clear();
                         ref
-                            .read(selectedParticipantsProvider(widget.groupId!)
+                            .read(selectedParticipantsProvider(_selectionKey)
                                 .notifier)
                             .clear();
                         Navigator.popUntil(
@@ -164,11 +169,10 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                         if (widget.groupId == null) return;
 
                         ref.read(groupsProvider.notifier).setParticipants(
-                              widget.groupId!,
+                              _selectionKey,
                               selectedIds,
                             );
                       }
-                      Navigator.pop(context);
                     },
                     child: const Text('Save'),
                   ),
