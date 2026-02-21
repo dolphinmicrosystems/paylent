@@ -43,7 +43,9 @@ class AppStrings {
 
   /// The title for the 'Add Expense' screen and button.
   static const String addExpense = 'Add Expense';
-
+ 
+  static const String editExpense = 'Edit Expense';
+  
   /// The label for the button that saves a new expense.
   static const String saveExpense = 'Save Expense';
 }

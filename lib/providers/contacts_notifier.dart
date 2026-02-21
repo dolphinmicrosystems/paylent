@@ -11,7 +11,6 @@ final notifierProvider =
   (final ref) => ContactsNotifier(),
 );
 
-
 class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
   ContactsNotifier() : super(const AsyncValue.loading()) {
     //state = AsyncValue.data(_initialContacts);
@@ -57,8 +56,9 @@ class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
       final rawContacts = await fetchDeviceContacts();
 
       // 2️⃣ Map device contacts → app Contact model
-      final futures =
-          rawContacts.where((final c) => c.phones.isNotEmpty).map((final c) async{
+      final futures = rawContacts
+          .where((final c) => c.phones.isNotEmpty)
+          .map((final c) async {
         final phone = normalizePhone(c.phones.first.number);
         final formatted = await formatPhoneForDisplay(phone);
         return Contact(
@@ -71,7 +71,7 @@ class ContactsNotifier extends StateNotifier<AsyncValue<List<Contact>>> {
       }).toList();
 
       final deviceContacts = await Future.wait(futures);
-      
+
       if (deviceContacts.isEmpty) {
         state = const AsyncValue.data([]);
         return;

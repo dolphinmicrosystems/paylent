@@ -1,13 +1,14 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:paylent/models/group_model.dart';
 import 'package:paylent/providers/contacts_notifier.dart';
+import 'package:paylent/providers/groups_provider.dart';
+import 'package:paylent/screens/contacts/contact_detail_screen.dart';
 import 'package:paylent/screens/contacts/widgets/contact_avatar.dart';
 
 class GroupMembersSheet extends ConsumerStatefulWidget {
-  final Group group;
+  final String groupId;
   const GroupMembersSheet({
-    required this.group,
+    required this.groupId,
     super.key,
   });
 
@@ -19,15 +20,16 @@ class _GroupMembersSheetState extends ConsumerState<GroupMembersSheet> {
   @override
   void initState() {
     super.initState();
-    //_listController = ScrollController();
-    Future.microtask(() {
-      ref.read(notifierProvider.notifier).loadFromDevice();
-    });
+    // Future.microtask(() {
+    //   ref.read(notifierProvider.notifier).loadFromDevice();
+    // });
   }
 
   @override
   Widget build(final BuildContext context) {
     final contactsAsync = ref.watch(notifierProvider);
+    final group =
+        ref.watch(groupsProvider).firstWhere((final g) => g.id == widget.groupId);
 
     return DraggableScrollableSheet(
       initialChildSize: 0.75,
@@ -52,13 +54,14 @@ class _GroupMembersSheetState extends ConsumerState<GroupMembersSheet> {
             ),
             data: (final contacts) {
               final members = contacts
-                  .where((final c) => widget.group.participantIds.contains(c.id))
+                  .where(
+                      (final c) => group.participantIds.contains(c.id))
                   .toList();
-        
+
               return Column(
                 children: [
                   const SizedBox(height: 12),
-        
+
                   // Drag handle
                   Container(
                     width: 40,
@@ -68,9 +71,9 @@ class _GroupMembersSheetState extends ConsumerState<GroupMembersSheet> {
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
-        
+
                   const SizedBox(height: 16),
-        
+
                   const Text(
                     'Group Members',
                     style: TextStyle(
@@ -78,9 +81,9 @@ class _GroupMembersSheetState extends ConsumerState<GroupMembersSheet> {
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-        
+
                   const SizedBox(height: 16),
-        
+
                   Expanded(
                     child: ListView.separated(
                       controller: controller,
@@ -89,7 +92,7 @@ class _GroupMembersSheetState extends ConsumerState<GroupMembersSheet> {
                           Divider(color: Colors.grey.shade800, height: 1),
                       itemBuilder: (final _, final index) {
                         final contact = members[index];
-        
+
                         return ListTile(
                           leading: ContactAvatar(contact: contact),
                           title: Text(
@@ -114,12 +117,35 @@ class _GroupMembersSheetState extends ConsumerState<GroupMembersSheet> {
                                 ),
                             ],
                           ),
-                          isThreeLine: true,
+                          isThreeLine: contact.email.isNotEmpty &&
+                              contact.phoneNumber != null &&
+                              contact.phoneNumber!.isNotEmpty,
+                          trailing: Material(
+                            color: Colors.transparent,
+                            child: InkWell(
+                              borderRadius: BorderRadius.circular(20),
+                              onTap: () async {
+                                await Navigator.push<String>(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (final _) => ContactDetailScreen(
+                                        contactId: contact.id,
+                                        groupId: group.id),
+                                  ),
+                                );
+                              },
+                              child: const Icon(
+                                Icons.chevron_right,
+                                color: Colors.white38,
+                                size: 22,
+                              ),
+                            ),
+                          ),
                         );
                       },
                     ),
                   ),
-        
+
                   const SizedBox(height: 12),
                 ],
               );

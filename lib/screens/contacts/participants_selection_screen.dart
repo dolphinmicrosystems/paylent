@@ -37,8 +37,8 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
     super.initState();
     _listController = ScrollController();
     _selectionKey = widget.mode == ParticipantsScreenMode.createGroup
-      ? 'draft_${DateTime.now().millisecondsSinceEpoch}'
-      : widget.groupId!;
+        ? 'draft_${DateTime.now().millisecondsSinceEpoch}'
+        : widget.groupId!;
 
     Future.microtask(() {
       ref.read(notifierProvider.notifier).loadFromDevice();
@@ -108,7 +108,8 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                       return ListView(
                         children: AlphabetSection.fromContacts(
                           contacts: filtered,
-                          itemBuilder: (final contact) => ParticipantContactTile(
+                          itemBuilder: (final contact) =>
+                              ParticipantContactTile(
                             contact: contact,
                             groupId: _selectionKey,
                           ),
@@ -150,6 +151,7 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                         if (draft == null) return;
 
                         ref.read(groupsProvider.notifier).addGroup(
+                              id: _selectionKey,
                               title: draft.name,
                               description: draft.description,
                               category: draft.category,
@@ -157,11 +159,11 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                               participantIds: selectedIds,
                             );
 
+                        ref.read(groupsProvider.notifier).setParticipants(
+                              _selectionKey,
+                              selectedIds,
+                            );
                         ref.read(groupDraftProvider.notifier).clear();
-                        ref
-                            .read(selectedParticipantsProvider(_selectionKey)
-                                .notifier)
-                            .clear();
                         Navigator.popUntil(
                             context, (final route) => route.isFirst);
                       } else {
@@ -172,6 +174,8 @@ class _ParticipantsScreenState extends ConsumerState<ParticipantsScreen> {
                               _selectionKey,
                               selectedIds,
                             );
+
+                        Navigator.pop(context, true);
                       }
                     },
                     child: const Text('Save'),

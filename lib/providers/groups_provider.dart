@@ -44,6 +44,7 @@ class GroupsNotifier extends StateNotifier<List<Group>> {
   }
 
   void addGroup({
+    required final String id,
     required final String title,
     required final String description,
     required final GroupCategory category,
@@ -53,7 +54,7 @@ class GroupsNotifier extends StateNotifier<List<Group>> {
     state = [
       ...state,
       Group(
-        id: DateTime.now().millisecondsSinceEpoch.toString(),
+        id: id,
         name: title,
         description: description,
         category: category,
@@ -78,6 +79,25 @@ class GroupsNotifier extends StateNotifier<List<Group>> {
             category: g.category,
             imagePath: g.imagePath,
             participantIds: participantIds,
+            transactionIds: g.transactionIds,
+          )
+        else
+          g,
+    ];
+  }
+
+  void removeParticipant(final String groupId, final String contactId) {
+    state = [
+      for (final g in state)
+        if (g.id == groupId)
+          Group(
+            id: g.id,
+            name: g.name,
+            description: g.description,
+            category: g.category,
+            imagePath: g.imagePath,
+            participantIds:
+                g.participantIds.where((final id) => id != contactId).toList(),
             transactionIds: g.transactionIds,
           )
         else

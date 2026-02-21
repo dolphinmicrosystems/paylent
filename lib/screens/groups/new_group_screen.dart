@@ -117,7 +117,8 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
                   children: GroupCategory.values.map((final cat) {
                     final String name = cat.name;
                     final dynamic iconData = cat.emoji;
-                    final bool selected = _selectedCategory == GroupCategory.fromString(name);
+                    final bool selected =
+                        _selectedCategory == GroupCategory.fromString(name);
                     return ChoiceChip(
                       showCheckmark: false,
                       label: Row(
@@ -139,7 +140,9 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
                       selected: selected,
                       onSelected: (final isSelected) {
                         setState(() {
-                          _selectedCategory = isSelected ? GroupCategory.fromString(name) : GroupCategory.other;
+                          _selectedCategory = isSelected
+                              ? GroupCategory.fromString(name)
+                              : GroupCategory.other;
                         });
                       },
                     );
@@ -163,11 +166,12 @@ class _NewGroupScreenState extends ConsumerState<NewGroupScreen> {
                         onPressed: () {
                           if (_formKey.currentState!.validate()) {
                             ref.read(groupDraftProvider.notifier).start(
-                                title: _titleController.text.trim(),
-                                description: _descriptionController.text.trim(),
-                                category: _selectedCategory,
-                                imagePath: _coverImage?.path,
-                              );
+                                  title: _titleController.text.trim(),
+                                  description:
+                                      _descriptionController.text.trim(),
+                                  category: _selectedCategory,
+                                  imagePath: _coverImage?.path,
+                                );
                             Navigator.push(
                               context,
                               MaterialPageRoute(

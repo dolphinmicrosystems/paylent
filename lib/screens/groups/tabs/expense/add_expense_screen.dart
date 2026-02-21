@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/app_nav.dart';
 import 'package:paylent/models/category_item.dart';
+import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/models/currency_model.dart';
 import 'package:paylent/models/transaction_category.dart';
@@ -172,7 +173,7 @@ class _AddExpenseScreenState extends ConsumerState<AddExpenseScreen> {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(_isEdit ? 'Edit Expense' : 'Add Expense'),
+        title: Text(_isEdit ? AppStrings.editExpense : AppStrings.addExpense),
         elevation: 0,
         actions: [
           if (_isEdit)

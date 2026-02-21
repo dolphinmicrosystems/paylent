@@ -2,11 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/contacts_notifier.dart';
+import 'package:paylent/providers/groups_provider.dart';
+import 'package:paylent/screens/contacts/widgets/contact_avatar.dart';
 
 class ContactDetailScreen extends ConsumerStatefulWidget {
   final String contactId;
-
-  const ContactDetailScreen({required this.contactId, super.key});
+  final String? groupId;
+  const ContactDetailScreen({required this.contactId, super.key, this.groupId});
 
   @override
   ConsumerState<ContactDetailScreen> createState() =>
@@ -70,13 +72,22 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen> {
     if (!confirmed) return;
 
     ref.read(notifierProvider.notifier).update(edited);
-    Navigator.pop(context, edited);
+    //Navigator.pop(context, edited);
   }
 
   Future<void> _delete() async {
-    ref.read(notifierProvider.notifier).delete(widget.contactId);
-    Navigator.pop(context, widget.contactId);
+  if (widget.groupId != null) {
+    // Remove only from this group
+    ref.read(groupsProvider.notifier)
+       .removeParticipant(widget.groupId!, widget.contactId);
+  } else {
+    // Optional: global delete if opened from contacts screen
+    ref.read(notifierProvider.notifier)
+       .delete(widget.contactId);
   }
+
+  Navigator.pop(context);
+}
 
   Future<bool> _confirmLeave() async {
     if (!_hasChanges) return true;
@@ -133,9 +144,9 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen> {
             const SizedBox(height: 40),
             GestureDetector(
               onDoubleTap: () => setState(() => _isEditing = true),
-              child: CircleAvatar(
-                radius: 48,
-                backgroundImage: NetworkImage(edited.avatarUrl),
+              child: ContactAvatar(
+                contact: edited,
+                radius: 50,
               ),
             ),
             const SizedBox(height: 16),
@@ -155,23 +166,23 @@ class _ContactDetailScreenState extends ConsumerState<ContactDetailScreen> {
                     ),
             ),
             const SizedBox(height: 8),
-            GestureDetector(
-              onDoubleTap: () => setState(() => _isEditing = true),
-              child: _isEditing
-                  ? TextField(
-                      controller: _emailController!,
-                      onChanged: (final v) => setState(() {
-                        _edited = edited.copyWith(email: v);
-                      }),
-                    )
-                  : Text(
-                      edited.email,
-                      style: const TextStyle(color: Colors.grey),
-                    ),
-            ),
-            const SizedBox(height: 32),
+            // GestureDetector(
+            //   onDoubleTap: () => setState(() => _isEditing = true),
+            //   child: _isEditing
+            //       ? TextField(
+            //           controller: _emailController!,
+            //           onChanged: (final v) => setState(() {
+            //             _edited = edited.copyWith(email: v);
+            //           }),
+            //         )
+            //       : Text(
+            //           edited.email,
+            //           style: const TextStyle(color: Colors.grey),
+            //         ),
+            // ),
+            // const SizedBox(height: 32),
             const Divider(),
-            const SizedBox(height: 32),
+           // const SizedBox(height: 32),
             if (_isEditing)
               ElevatedButton(
                 onPressed: _handleSave,

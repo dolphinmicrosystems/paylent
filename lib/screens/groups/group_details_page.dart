@@ -155,7 +155,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
                                   color: Colors.white,
                                 ),
                               ),
-                              GroupMemberButton(group: group),
+                              GroupMemberButton(groupId: group.id),
                             ],
                           ),
                         ),
