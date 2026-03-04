@@ -7,6 +7,7 @@ import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/group_model.dart';
 import 'package:paylent/providers/groups_provider.dart';
 import 'package:paylent/providers/transactions_provider.dart';
+import 'package:paylent/screens/groups/tabs/balance/balances_tab.dart';
 import 'package:paylent/screens/groups/tabs/expense/add_expense_screen.dart';
 import 'package:paylent/screens/groups/tabs/expense/expenses_tab.dart';
 import 'package:paylent/screens/groups/widgets/group_member_button.dart';
@@ -179,30 +180,12 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
           body: TabBarView(
             controller: _tabController,
             children: [
-              ExpensesTab(transactions: transactions),
-              const _PlaceholderTab(title: 'Balances'),
+              ExpensesTab(groupId: group.id, transactions: transactions),
+              BalancesTab(groupId: group.id),
               const _PlaceholderTab(title: 'Totals'),
               const _PlaceholderTab(title: 'Group Info'),
             ],
           ),
-        ),
-      ),
-
-      /// FAB should later dispatch to transactionsProvider
-      floatingActionButton: FloatingActionButton.extended(
-        onPressed: () async {
-          // Navigator.pushNamed(context, AppRoutes.addExpense);
-          await AppNav.push(
-              context,
-              AddExpenseScreen(
-                groupId: group.id,
-              ));
-        },
-        backgroundColor: Colors.blue,
-        icon: const Icon(Icons.add, color: Colors.black),
-        label: const Text(
-          AppStrings.addExpense,
-          style: TextStyle(color: Colors.black),
         ),
       ),
     );

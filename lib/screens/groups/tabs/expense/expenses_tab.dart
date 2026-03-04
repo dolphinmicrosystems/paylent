@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 import 'package:paylent/app_nav.dart';
 import 'package:paylent/models/category_item.dart';
+import 'package:paylent/models/constants.dart';
 import 'package:paylent/models/transaction_model.dart';
 import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/transactions_provider.dart';
@@ -11,14 +12,15 @@ import 'package:paylent/utils/contact_display.dart';
 
 class ExpensesTab extends ConsumerWidget {
   final List<Transaction> transactions;
-
+  final String groupId;
   const ExpensesTab({
+    required this.groupId,
     required this.transactions,
     super.key,
   });
 
   @override
-  Widget build(final BuildContext context, final WidgetRef ref) {
+  Widget _buildBody(final BuildContext context, final WidgetRef ref) {
     if (transactions.isEmpty) {
       return const Center(
         child: Text(
@@ -102,12 +104,14 @@ class ExpensesTab extends ConsumerWidget {
                           color: Color.fromARGB(59, 46, 46, 46),
                         ),
                       ListTile(
-                        leading:  CircleAvatar(
+                        leading: CircleAvatar(
                           backgroundColor: categoryItem.backgroundColor,
-                          child: Icon(categoryItem.icon, color: categoryItem.iconColor),
+                          child: Icon(categoryItem.icon,
+                              color: categoryItem.iconColor),
                         ),
                         title: Text(tx.title),
-                        subtitle: Text('Paid by ${displayName(contact: contact, currentUserId: '')}'),
+                        subtitle: Text(
+                            'Paid by ${displayName(contact: contact, currentUserId: '')}'),
                         trailing: Column(
                           crossAxisAlignment: CrossAxisAlignment.end,
                           mainAxisAlignment: MainAxisAlignment.center,
@@ -160,4 +164,26 @@ class ExpensesTab extends ConsumerWidget {
 
   static String _formatDate(final DateTime date) =>
       '${DateFormat('MMM').format(date)} ${date.day}';
+
+  @override
+  Widget build(final BuildContext context, final WidgetRef ref) => Scaffold(
+        backgroundColor: Colors.transparent,
+        floatingActionButton: FloatingActionButton.extended(
+          onPressed: () async {
+            await AppNav.push(
+              context,
+              AddExpenseScreen(
+                groupId: groupId, // Use the passed groupId
+              ),
+            );
+          },
+          backgroundColor: Colors.blue,
+          icon: const Icon(Icons.add, color: Colors.black),
+          label: const Text(
+            AppStrings.addExpense,
+            style: TextStyle(color: Colors.black),
+          ),
+        ),
+        body: _buildBody(context, ref),
+      );
 }

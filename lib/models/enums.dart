@@ -16,3 +16,11 @@ enum AuthMethod { email, google, fingerprint }
 /// are handled safely and consistently throughout the app.
 enum NavTab { dashboard, transactions, add, budget, profile }
 
+enum BalanceFilter {
+  all('All'),
+  owesYou('Owes You'),
+  youOwe('You Owe');
+
+  final String label;
+  const BalanceFilter(this.label);
+}
