@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/enums.dart';
+import 'package:paylent/models/member_balance.dart';
 import 'package:paylent/providers/balance_provider.dart';
+import 'package:paylent/providers/contacts_notifier.dart';
+import 'package:paylent/screens/contacts/widgets/contact_avatar.dart';
 import 'package:paylent/screens/groups/tabs/balance/member_details_screen.dart';
 
 class BalancesTab extends ConsumerStatefulWidget {
@@ -26,10 +29,12 @@ class _BalancesTabState extends ConsumerState<BalancesTab> {
 
   @override
   Widget build(final BuildContext context) {
-    final dynamicBalances = ref.watch(groupBalancesProvider(widget.groupId));
+    final contact = ref.read(notifierProvider.notifier).getByIdSafe(widget.groupId);
+
+    List<MemberBalance> dynamicBalances = ref.watch(groupBalancesProvider(widget.groupId));
     final filteredBalances = dynamicBalances.where((final member) {
       final matchesSearch =
-          member.name.toLowerCase().contains(_searchQuery.toLowerCase());
+          member.contact.name.toLowerCase().contains(_searchQuery.toLowerCase());
 
       bool matchesFilter = true;
       switch (_activeFilter) {
@@ -78,6 +83,7 @@ class _BalancesTabState extends ConsumerState<BalancesTab> {
                         child: ChoiceChip(
                           label: Text(filter.label),
                           selected: isActive,
+                          showCheckmark: false,
                           onSelected: (final selected) {
                             if (selected) {
                               setState(() => _activeFilter = filter);
@@ -140,16 +146,7 @@ class _BalancesTabState extends ConsumerState<BalancesTab> {
                         child: ListTile(
                           contentPadding: const EdgeInsets.symmetric(
                               horizontal: 16, vertical: 8),
-                          leading: CircleAvatar(
-                            radius: 24,
-                            backgroundColor: Colors.grey.withValues(alpha: 0.2),
-                            child: Text(
-                              member.name.substring(0, 1).toUpperCase(),
-                              style: const TextStyle(
-                                  color: Colors.white,
-                                  fontWeight: FontWeight.bold),
-                            ),
-                          ),
+                          leading: ContactAvatar(contact: member.contact),
                           onTap: () => Navigator.push(
                             context,
                             MaterialPageRoute(
@@ -158,7 +155,7 @@ class _BalancesTabState extends ConsumerState<BalancesTab> {
                             ),
                           ),
                           title: Text(
-                            member.name,
+                            member.contact.name,
                             style: const TextStyle(
                               color: Colors.white,
                               fontWeight: FontWeight.w600,

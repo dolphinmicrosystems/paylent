@@ -1,13 +1,13 @@
+import 'package:paylent/models/contact_info.dart';
+
 class MemberBalance {
   final String id;
-  final String name;
-  final String avatarUrl;
+  final Contact contact;
   final double balance; // Positive = they are owed, Negative = they owe
 
   MemberBalance({
+    required this.contact,
     required this.id,
-    required this.name,
-    required this.avatarUrl,
     required this.balance,
   });
 }

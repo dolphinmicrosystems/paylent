@@ -1,4 +1,5 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/models/member_balance.dart';
 import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/transactions_provider.dart';
@@ -44,12 +45,11 @@ final groupBalancesProvider = Provider.family<List<MemberBalance>, String>((fina
     final netBalance = entry.value;
     
     // Fetch the user's details using your existing contact methods
-    final contact = contactsNotifier.getByIdSafe(contactId);
+    final contact = contactsNotifier.getByIdSafe(contactId) ?? Contact(id: contactId, name: 'Unknown', email: '', avatarUrl: ''); // Fallback if contact not found
 
     return MemberBalance(
       id: contactId,
-      name: contact?.name ?? 'Unknown User',
-      avatarUrl: contact?.avatarUrl ?? '', 
+      contact: contact,
       balance: netBalance,
     );
   })

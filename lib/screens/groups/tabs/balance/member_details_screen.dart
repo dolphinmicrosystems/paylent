@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:paylent/models/member_balance.dart';
+import 'package:paylent/screens/contacts/widgets/contact_avatar.dart';
 
 class MemberDetailsScreen extends StatelessWidget {
   final MemberBalance member;
@@ -12,7 +13,7 @@ class MemberDetailsScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(
-        title: Text(member.name),
+        title: Text(member.contact.name),
         backgroundColor: Colors.transparent,
         elevation: 0,
         centerTitle: true,
@@ -24,14 +25,7 @@ class MemberDetailsScreen extends StatelessWidget {
             padding: const EdgeInsets.symmetric(vertical: 24.0, horizontal: 16.0),
             child: Column(
               children: [
-                CircleAvatar(
-                  radius: 48,
-                  backgroundColor: Colors.grey.withOpacity(0.2),
-                  child: Text(
-                    member.name.substring(0, 1).toUpperCase(),
-                    style: const TextStyle(fontSize: 36, color: Colors.white, fontWeight: FontWeight.bold),
-                  ),
-                ),
+               ContactAvatar(contact: member.contact),
                 const SizedBox(height: 16),
                 Text(
                   isPositive ? 'Total owed to you' : 'Total you owe',
@@ -97,7 +91,7 @@ class MemberDetailsScreen extends StatelessWidget {
                   leading: Container(
                     padding: const EdgeInsets.all(10),
                     decoration: BoxDecoration(
-                      color: Colors.white.withOpacity(0.05),
+                      color: Colors.white.withValues(alpha: 0.05),
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Icon(
@@ -118,7 +112,7 @@ class MemberDetailsScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.end,
                     children: [
                       Text(
-                        paidByMe ? 'You paid \$100' : '${member.name.split(' ')[0]} paid \$50',
+                        paidByMe ? 'You paid \$100' : '${member.contact.name.split(' ')[0]} paid \$50',
                         style: TextStyle(color: Colors.grey.shade400, fontSize: 12),
                       ),
                       Text(
