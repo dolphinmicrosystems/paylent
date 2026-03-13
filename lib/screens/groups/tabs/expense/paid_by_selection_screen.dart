@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/providers/contacts_notifier.dart';
 import 'package:paylent/providers/groups_provider.dart';
+import 'package:paylent/screens/contacts/widgets/contact_avatar.dart';
 
 class PaidBySelectionScreen extends ConsumerWidget {
   final String selectedValue; // contactId
@@ -40,24 +41,7 @@ class PaidBySelectionScreen extends ConsumerWidget {
                 final isSelected = contact.id == selectedValue;
 
                 return ListTile(
-                  leading: CircleAvatar(
-                    radius: 22,
-                    backgroundColor: Colors.grey.shade300,
-                    backgroundImage: (contact.avatarUrl.isNotEmpty)
-                        ? NetworkImage(contact.avatarUrl)
-                        : null,
-                    child: (contact.avatarUrl.isEmpty)
-                        ? Text(
-                            contact.name.isNotEmpty
-                                ? contact.name[0].toUpperCase()
-                                : '?',
-                            style: const TextStyle(
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          )
-                        : null,
-                  ),
+                  leading: ContactAvatar(contact: contact),
                   title: Text(
                     contact.name,
                     style: const TextStyle(fontSize: 16),

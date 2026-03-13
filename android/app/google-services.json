@@ -12,7 +12,20 @@
           "package_name": "com.payee.paylent"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "193564904554-laeihg9akhvubpaiiivi8msd2kaqt1bn.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.payee.paylent",
+            "certificate_hash": "ed8f06f0deb0d4e2b72cb9f98893a3c5cd9652da"
+          }
+        },
+        {
+          "client_id": "193564904554-cfh11bm25ij52q7lrhm7da2qj54qlho3.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyAJkkJ77sqRoSeIhdED3POxkikU2JHLByI"
@@ -20,7 +33,12 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "193564904554-cfh11bm25ij52q7lrhm7da2qj54qlho3.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
         }
       }
     }
