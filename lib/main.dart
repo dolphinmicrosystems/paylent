@@ -7,7 +7,7 @@ import 'package:paylent/screens/auth/auth_entry_screen.dart';
 import 'package:paylent/screens/auth/email_login_screen.dart';
 import 'package:paylent/screens/auth/fingerprint_login_screen.dart';
 import 'package:paylent/screens/auth/forgot_password_screen.dart';
-import 'package:paylent/screens/auth/google_login_screen.dart';
+//import 'package:paylent/screens/auth/google_login_screen.dart';
 import 'package:paylent/screens/main/home_screen.dart';
 import 'package:paylent/screens/splash/splash_screen.dart';
 import 'package:paylent/theme/app_theme.dart';
@@ -64,8 +64,8 @@ class PaylentApp extends StatelessWidget {
                 const EmailLoginScreen(),
             AppRoutes.fingerprintLogin: (final BuildContext context) =>
                 const FingerprintLoginScreen(),
-            AppRoutes.googleLogin: (final BuildContext context) =>
-                const GoogleLoginScreen(),
+            // AppRoutes.googleLogin: (final BuildContext context) =>
+            //     const GoogleLoginScreen(),
             AppRoutes.home: (final BuildContext context) => const HomeScreen(),
             AppRoutes.forgotPassword: (final context) => const ForgotPasswordScreen(),
           },

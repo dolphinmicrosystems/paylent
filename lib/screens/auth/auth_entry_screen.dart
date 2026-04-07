@@ -101,7 +101,8 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
         return;
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
 
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
@@ -110,6 +111,17 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
 
       await FirebaseAuth.instance.signInWithCredential(credential);
 
+      final User? user = FirebaseAuth.instance.currentUser;
+
+      if (user != null) {
+        final String? idToken = await user.getIdToken();
+        final String uid = user.uid;
+
+        print('UID: $uid');
+        print('ID TOKEN: $idToken');
+
+        // 👉 TODO: Send this token to your Django backend
+      }
       if (mounted) {
         Navigator.of(context).pushReplacementNamed(AppRoutes.home);
       }
@@ -170,15 +182,16 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                       style: TextStyle(color: Colors.grey),
                     ),
                     const SizedBox(height: 20),
-                    
+
                     // Google Login Button
                     _isLoading
                         ? const Center(child: CircularProgressIndicator())
                         : IconButton(
                             onPressed: _handleGoogleSignIn,
-                            icon: Image.asset('assets/google_logo.png', height: 40),
+                            icon: Image.asset('assets/google_logo.png',
+                                height: 40),
                           ),
-                          
+
                     const SizedBox(height: 40),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.center,
@@ -219,7 +232,8 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                 prefixIcon: Icon(Icons.email_outlined),
               ),
               validator: (final value) {
-                if (value == null || value.isEmpty) return 'Please enter your email';
+                if (value == null || value.isEmpty)
+                  return 'Please enter your email';
                 if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                   return 'Please enter a valid email';
                 }
@@ -236,7 +250,8 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                 prefixIcon: Icon(Icons.lock_outline),
               ),
               validator: (final value) {
-                if (value == null || value.isEmpty) return 'Please enter your password';
+                if (value == null || value.isEmpty)
+                  return 'Please enter your password';
                 return null;
               },
             ),
@@ -248,13 +263,15 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                   children: [
                     Checkbox(
                       value: _rememberMe,
-                      onChanged: (final value) => setState(() => _rememberMe = value!),
+                      onChanged: (final value) =>
+                          setState(() => _rememberMe = value!),
                     ),
                     const Text('Remember me'),
                   ],
                 ),
                 TextButton(
-                  onPressed: () => Navigator.pushNamed(context, AppRoutes.forgotPassword),
+                  onPressed: () =>
+                      Navigator.pushNamed(context, AppRoutes.forgotPassword),
                   child: const Text('Forgot Password?'),
                 ),
               ],
@@ -293,7 +310,8 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                 prefixIcon: Icon(Icons.person_outline),
               ),
               validator: (final value) {
-                if (value == null || value.isEmpty) return 'Please enter your name';
+                if (value == null || value.isEmpty)
+                  return 'Please enter your name';
                 return null;
               },
             ),
@@ -306,7 +324,8 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                 prefixIcon: Icon(Icons.email_outlined),
               ),
               validator: (final value) {
-                if (value == null || value.isEmpty) return 'Please enter your email';
+                if (value == null || value.isEmpty)
+                  return 'Please enter your email';
                 if (!RegExp(r'^[^@]+@[^@]+\.[^@]+').hasMatch(value)) {
                   return 'Please enter a valid email';
                 }
@@ -323,8 +342,10 @@ class _AuthEntryScreenState extends State<AuthEntryScreen> {
                 prefixIcon: Icon(Icons.lock_outline),
               ),
               validator: (final value) {
-                if (value == null || value.isEmpty) return 'Please enter a password';
-                if (value.length < 6) return 'Password must be at least 6 characters long';
+                if (value == null || value.isEmpty)
+                  return 'Please enter a password';
+                if (value.length < 6)
+                  return 'Password must be at least 6 characters long';
                 return null;
               },
             ),

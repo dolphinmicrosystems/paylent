@@ -5,7 +5,6 @@ import 'package:intl/intl.dart';
 import 'package:paylent/app_nav.dart';
 import 'package:paylent/models/category_item.dart';
 import 'package:paylent/models/constants.dart';
-import 'package:paylent/models/contact_info.dart';
 import 'package:paylent/models/currency_model.dart';
 import 'package:paylent/models/transaction_category.dart';
 import 'package:paylent/models/transaction_model.dart';

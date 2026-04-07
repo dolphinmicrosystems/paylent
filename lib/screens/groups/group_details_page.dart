@@ -53,7 +53,7 @@ class _GroupDetailsPageState extends ConsumerState<GroupDetailsPage>
   @override
   Widget build(final BuildContext context) {
     final group = ref.watch(groupsProvider).firstWhere(
-          (g) => g.id == widget.group.id,
+          (final g) => g.id == widget.group.id,
         );
 
     /// ✅ Transactions are now derived from provider

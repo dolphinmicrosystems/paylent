@@ -140,7 +140,7 @@ class _CurrencySelectionScreenState extends State<CurrencySelectionScreen> {
 
   _filteredCurrencies = [
     selected,
-    ..._allCurrencies.where((c) => c.code != selected.code),
+    ..._allCurrencies.where((final c) => c.code != selected.code),
   ];
 }
 

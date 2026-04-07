@@ -92,7 +92,7 @@ class _ContactsScreenState extends ConsumerState<ContactsScreen> {
       child: ListView(
         children: AlphabetSection.fromContacts(
           contacts: filteredContacts,
-          itemBuilder: (contact) => ContactTile(
+          itemBuilder: (final contact) => ContactTile(
             contact: contact,
             onTap: () {
               _openDetail(contact.id);

@@ -16,7 +16,7 @@ class BalancesTab extends ConsumerStatefulWidget {
 }
 
 class _BalancesTabState extends ConsumerState<BalancesTab> {
-  String _searchQuery = '';
+  final String _searchQuery = '';
   BalanceFilter _activeFilter = BalanceFilter.all;
 
   // final List<MemberBalance> _allBalances = [
@@ -31,7 +31,7 @@ class _BalancesTabState extends ConsumerState<BalancesTab> {
   Widget build(final BuildContext context) {
     final contact = ref.read(notifierProvider.notifier).getByIdSafe(widget.groupId);
 
-    List<MemberBalance> dynamicBalances = ref.watch(groupBalancesProvider(widget.groupId));
+    final List<MemberBalance> dynamicBalances = ref.watch(groupBalancesProvider(widget.groupId));
     final filteredBalances = dynamicBalances.where((final member) {
       final matchesSearch =
           member.contact.name.toLowerCase().contains(_searchQuery.toLowerCase());
